@@ -2,7 +2,7 @@
   "name": "rollershare",
   "version": "0.1.0",
   "description": "Program used to roll random values based on statistics in character portfolio files from Hero Lab.",
-  "author": "Michael Fawver <michael@fawver.net>",
+  "author": "Michael Fawver <phone@fawver.net>",
   "dependencies": {
     "express": "^4.13.3",
     "http-proxy": "^1.11.2",
@@ -17,6 +17,6 @@
   "main": "main.js",
   "devDependencies": {},
   "scripts": {
-    "start": "node index.js"
+    "start": "node main.js"
   }
 }
