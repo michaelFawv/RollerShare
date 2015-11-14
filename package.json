@@ -5,13 +5,14 @@
   "author": "Michael Fawver <phone@fawver.net>",
   "dependencies": {
     "express": "^4.13.3",
+    "http": "0.0.0",
     "http-proxy": "^1.11.2",
     "jszip": "^2.5.0",
     "path": "^0.12.7",
     "socket.io": "1.3.x",
     "validator": "4.0.x"
   },
- "engines": {
+  "engines": {
     "node": "4.1.1"
   },
   "license": "MIT",

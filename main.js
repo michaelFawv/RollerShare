@@ -1,8 +1,5 @@
 var http = require('http'),
 	express = require('express'),
-    fs = require('fs'),
-    httpProxy = require('http-proxy'),
-    path = require('path'),
     sanitize = require('validator'),
 	//JSZip = require('jszip'),
 	app = express();
