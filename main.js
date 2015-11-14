@@ -1,7 +1,6 @@
 var http = require('http'),
 	express = require('express'),
     sanitize = require('validator'),
-	//JSZip = require('jszip'),
 	app = express();
 
 app.set('port', 3000);  
