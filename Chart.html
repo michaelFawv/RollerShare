@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<script src="Chart.min.js"></script>
+		
+        <script src="/socket.io/socket.io.js"></script>
+		
+        <script type="text/javascript">
+		
+			var myNewChart = null;
+			var myName = '';
+
+			var socketio = io.connect();  // no url will attempt to connect to the host that served the page.      
+			socketio.on("roll_update_message_to_client", function(data) {
+				if(myNewChart === null) { return; } // no chart, nothing to update				
+				
+				if(data['name'] === myName) {
+					var newData = data['array'];
+					if(newData) {
+						for(var i = 0; i < 20; i++) {
+							if(newData[i] !== undefined) {
+								myNewChart.datasets[0].bars[i].value = newData[i];
+							}
+						}
+						myNewChart.update();
+					}
+				}
+			});
+
+			function initChart() {
+				var parameter = window.location.search.substring(1);
+				myName = decodeURIComponent(parameter);			
+				var array = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];  // Yes, that's 20 zeros
+				
+				var data = {
+					labels: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
+					datasets: [
+						{
+							label: "D20 Roll Distribution",
+							fillColor: "rgba(0,100,0,0.5)",
+							strokeColor: "rgba(0,150,0,0.8)",
+							highlightFill: "rgba(0,0,0,0.75)",
+							highlightStroke: "rgba(0,100,0,1)",
+							data: array
+						}
+					]
+				};
+
+				// Get the context of the canvas element so we can put the chart on it.
+				var ctx = document.getElementById("myChart").getContext("2d");
+				myNewChart = new Chart(ctx).Bar(data, {});
+				
+				socketio.emit("roll_distribution_page_loaded", { name: myName} );  // notify the server and thus the instigating client we're ready for data
+				document.title = "D20 Roll Distribution for " + myName;
+				
+				document.getElementById("nameDiv").appendChild(document.createTextNode(myName));
+			}
+
+			
+		</script>
+    </head>
+    <body background="TextureBackground.jpg" onload='initChart()'>
+		<center>
+			<h1>Session Distribution of D20 Rolls</h1>
+			<div id='nameDiv'></div>
+			<div id="chart">
+				<canvas id="myChart" width="600" height="400"></canvas>
+			</div>
+		</center>
+    </body>
+</html>

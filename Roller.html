@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset = "utf-8">
+	<title>RollerShare by Michael</title>
+	<style>
+		table, th, td {
+			border: 1px solid gray;
+			border-collapse: collapse;
+			padding-top: 0px;
+			padding-right: 3px;
+			padding-bottom: 0px;
+			padding-left: 3px;
+		}
+		.none {
+			border: none;
+			border-collapse: collapse;
+		}
+		
+		#wrap {
+		   width:1130px;
+		   margin:0 auto;
+		}
+		#left_col {
+		   float:left;
+		   width:900px;
+		}
+		#right_col {
+		   float:right;
+		   width:230px;
+		}
+		#main_log {
+			float:left;
+			width: 500;
+		}
+		#chat_log {
+			float:right;
+			width: 400;
+		}
+	</style>
+	
+	<script src="jszip.js" ></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var socketio = io.connect();  // no url will attempt to connect to the host that served the page.      
+		socketio.on("message_to_client", function(data) {
+			Roller.handleMessageFromServerToClients(data);
+		});
+		
+		socketio.on("roll_distribution_page_loaded_client", function(data) {
+			Roller.rollsChartLoaded(data['name']);
+		});
+
+		function sendMessage(message, name) {
+			var msg = message;
+			socketio.emit("message_to_server", { name: name, message : msg});
+		}
+		
+		function sendRollUpdate(name, array) {
+			socketio.emit("roll_update_message", { name: name, array: array});
+		}
+	</script>
+	<script type="text/javascript" src="roller.js" ></script>
+
+</head>
+
+<body background="TextureBackground.jpg" onload='Roller.init()'>
+<div id="wrap">
+    <div id="left_col">
+		<div style="background-color: #b0c4de;">
+			<label for="inputFile">Select a portfolio file:</label>
+			<input id="inputFile" type="file" onchange="Roller.inputFile_Changed()"></input>
+			<input id="refresh" type="button" onclick="Roller.onRefreshClick()" hidden="false" value="Refresh"></input>
+		</div>
+		<div>
+			<table class='none'>
+			  <tr>
+				<td class='none'>
+					<div id="init"></div>
+				</td>
+				<td class='none'>
+					<div id="char"></div>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		<div id="weapons"></div>
+		<div id="theSplit" style="margin: 5px 0px;">
+		    <table class='none'>
+			  <tr>
+				<td class='none'>
+					<div id="saves"></div>
+				</td>
+				<td class='none'>
+					<div id="str"></div>
+				</td>
+				<td class='none'>
+					<div id="int"></div>
+				</td>
+				<td class='none'>
+					<div id="cmb"></div>
+				</td>
+				<td class='none'>
+					<div id="cmd"></div>
+				</td>
+			  </tr>
+			</table>
+		</div>
+		
+		<div id="skills"></div>
+		<div id='logs'>
+			<div id="main_log">
+				<p>Log - Most recent at top. <INPUT onclick="Roller.clearLog()" type="button" value="clear" name="clearbtn" /> 
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="TeamRolls.html" target="_blank" title='This will open a new page where all rolls of the party are shared'>Open team rolls log</a>
+					<label title='Check this to keep rolls private.  Boring.'><input type="checkbox" id="mute" value="mute_checkbox">Mute roll sharing.</label>
+				</p>
+				<!-- <textarea id="logText" name="logText" rows="13" cols="80" style="border-style: inset;"></textarea> -->
+				<div id="logText" name="logText" contenteditable="true" style='background-color: white; border-style: inset; max-height:200px; min-height:200px; min-width:800px; overflow:auto;'>
+					<span>&nbsp;</span>
+				</div>
+
+			</div>
+		</div>
+		
+    </div>
+    <div id="right_col" >
+        <div id="Dice" style="background-color: #b0ff22; border: 1px solid gray; border-style: outset; padding-left: 10px; padding-top: 3px; padding-bottom: 3px;">
+			<center>Standard Rolls</center><p>
+			Number of dice: <select id='numberOfDice'>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+			</select><br>
+			Plus: <input id='plusToDice' size='5' type="text" name="Plus" maxlength="5" >
+			<input id="rollerReset" type="button" onclick="Roller.clearRoller()" value="Reset" /><br>
+			<input id="d100" type="button" onclick="Roller.rollFromRoller('d100')" value="Roll d100" /><br>
+			<input id="d20" type="button" onclick="Roller.rollFromRoller('d20')" value="Roll d20" /><br>
+			<input id="d12" type="button" onclick="Roller.rollFromRoller('d12')" value="Roll d12" /><br>
+			<input id="d10" type="button" onclick="Roller.rollFromRoller('d10')" value="Roll d10" /><br>
+			<input id="d8" type="button" onclick="Roller.rollFromRoller('d8')" value="Roll d8" /><br>
+			<input id="d6" type="button" onclick="Roller.rollFromRoller('d6')" value="Roll d6" /><br>
+			<input id="d4" type="button" onclick="Roller.rollFromRoller('d4')" value="Roll d4" /><br>
+			<p>
+			<center>Custom Rolls</center><p>
+			<input id="rollrollString1" type="button" onclick="Roller.rollRollString(1)" value="Roll String:" />
+			<input id='rollString1' size='10' type="text" name="rollString1" onblur="Roller.onInputBlur('rollString1')"/>
+			<br>
+			<input id="rollrollString2" type="button" onclick="Roller.rollRollString(2)" value="Roll String:" />
+			<input id='rollString2' size='10' type="text" name="rollString2" onblur="Roller.onInputBlur('rollString2')"/>
+			<br>
+			<input id="rollrollString3" type="button" onclick="Roller.rollRollString(3)" value="Roll String:" />
+			<input id='rollString3' size='10' type="text" name="rollString3" onblur="Roller.onInputBlur('rollString3')"/>
+			<br>
+			<input id="rollrollString4" type="button" onclick="Roller.rollRollString(4)" value="Roll String:" />
+			<input id='rollString4' size='10' type="text" name="rollString4" onblur="Roller.onInputBlur('rollString4')"/>
+			<br>
+			<input id="rollrollString5" type="button" onclick="Roller.rollRollString(5)" value="Roll String:" />
+			<input id='rollString5' size='10' type="text" name="rollString5" onblur="Roller.onInputBlur('rollString5')"/>
+			<br>
+			<input id="rollrollString6" type="button" onclick="Roller.rollRollString(6)" value="Roll String:" />
+			<input id='rollString6' size='10' type="text" name="rollString6" onblur="Roller.onInputBlur('rollString6')"/>
+			<br>
+		</div>
+		<div>
+			<br>
+			<center>
+				<INPUT id='chartbtn' disabled='true' title='This will open a new page showing the distribution of D20 rolls this session.' 
+					onclick="Roller.openRollsChart()" type="button" value="Show Roll Distribution Graph" name="chartbtn"/> 
+			</center>
+		</div>
+    </div>
+</div>
+
+</body>
+</html>

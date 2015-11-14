@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<title>RollerShare Team Roll log</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script type="text/javascript">
+			var colorArray = ['Navy', 'Crimson', 'DarkGreen', 'Black', 'DarkMagenta', 'Olive', 'DarkOrange', 'FireBrick', 
+						'Chartreuse', 'Maroon', 'DeepPink', 'MidnightBlue', 'Chocolate', 'OrangeRed', 'Red', 'Teal', 'BlueViolet' ];	
+			var namesList = {};
+			var nextColor = 0;
+			
+			var socketio = io.connect();  // no url will attempt to connect to the host that served the page.      
+			socketio.on("message_to_client", function(data) {
+				
+				var element = document.getElementById('chatLogText');
+				if(element) {
+					var value = data['message'];
+					var name = data['name'];
+					var nameColor = 'Red';
+					if( !namesList.hasOwnProperty(name) ) {
+						namesList[name] = getNextColor();
+					}
+					nameColor = namesList[name];
+
+					var span = document.createElement('span');
+					span.style = "color: " + nameColor;
+					
+					span.appendChild( document.createTextNode(value));
+					span.appendChild(document.createElement('br'));
+					
+					element.insertBefore(span, element.firstChild);
+				}
+			});
+			
+			function getNextColor() {
+				if( nextColor >= colorArray.length) {
+					nextColor = 0;
+				}
+				return colorArray[nextColor++];
+			}
+			
+			function ClearLog() {
+				var element = document.getElementById('chatLogText');
+				if(element) {
+					while( element.hasChildNodes() ){
+						element.removeChild(element.lastChild);
+					}
+					var span = document.createElement('span');
+					span.appendChild( document.createTextNode(' '));
+					element.appendChild(span);
+
+				}
+			}
+		</script>
+    </head>
+    <body background="TextureBackground.jpg">
+		<div id="chat_log">
+			<center>
+				<h1>Team Roll Log</h1>
+			</center>
+			 Most recent at top. <INPUT onclick="ClearLog()" type="button" value="clear" name="clearbtn" /> 
+			
+			<div id="chatLogText" contenteditable="true" style='background-color: white; border-style: inset; max-height:600px; min-height:200px; overflow:auto;'>
+				<span>&nbsp;</span>
+			</div>
+		</div>
+
+    </body>
+</html>
