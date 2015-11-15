@@ -32,7 +32,9 @@
 					while(countElement.childNodes.length >= 1) {
 						countElement.removeChild(countElement.firstChild);
 					}
-					countElement.appendChild(document.createTextNode("After " + sumOfRolls(newData) + " rolls."));
+					var sumOf = sumOfRolls(newData);
+					var average = sumOf / 20;
+					countElement.appendChild(document.createTextNode("After " + sumOf + " rolls average roll is " + average + "."  ));
 				}
 			});
 
