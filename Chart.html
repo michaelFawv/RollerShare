@@ -32,9 +32,10 @@
 					while(countElement.childNodes.length >= 1) {
 						countElement.removeChild(countElement.firstChild);
 					}
-					var sumOf = sumOfRolls(newData);
-					var average = sumOf / 20;
-					countElement.appendChild(document.createTextNode("After " + sumOf + " rolls average roll is " + average + "."  ));
+					var countOf = countOfRolls(newData);
+					var sumOf = totalSumOfRolls(newData);
+					var average = sumOf / (countOf != 0 ? countOf : 1);
+					countElement.appendChild(document.createTextNode("After " + countOf + " rolls average roll is " + average + "."  ));
 				}
 			});
 
@@ -65,11 +66,16 @@
 				document.title = "D20 Roll Distribution for " + myName;
 				
 				document.getElementById("nameDiv").appendChild(document.createTextNode(myName));
-				document.getElementById("countdiv").appendChild(document.createTextNode("After " + sumOfRolls(array) + " rolls."));
+				document.getElementById("countdiv").appendChild(document.createTextNode("After " + countOfRolls(array) + " rolls."));
 			}
-			function sumOfRolls(array) {
+			function countOfRolls(array) {
 				return array.reduce(function(a, b) {
 					return a + b;
+				});
+			}
+			function totalSumOfRolls(array) {
+				return array.reduce(function(a, b, index) {
+					return a + (b*index);
 				});
 			}
 			
