@@ -7,7 +7,9 @@ app.set('port', 3000);
 app.use(express.static(__dirname));
 
 //Setup client server
-var httpapp = http.createServer(app).listen(app.get('port'));
+var httpapp = http.createServer(app).listen(app.get('port'), function() {
+  console.log('Node app is running on port', app.get('port'));
+});
  
 var io = require('socket.io').listen(httpapp);
 
