@@ -9,13 +9,14 @@
 		
 			var myNewChart = null;
 			var myName = '';
-
+			var newData = [];
+			
 			var socketio = io.connect();  // no url will attempt to connect to the host that served the page.      
 			socketio.on("roll_update_message_to_client", function(data) {
 				if(myNewChart === null) { return; } // no chart, nothing to update				
 				
 				if(data['name'] === myName) {
-					var newData = data['array'];
+					newData = data['array'];
 					if(newData) {
 						for(var i = 0; i < 20; i++) {
 							if(newData[i] !== undefined) {
@@ -24,6 +25,14 @@
 						}
 						myNewChart.update();
 					}
+				}
+				
+				var countElement = document.getElementById("countdiv");
+				if(countElement) {
+					while(countElement.childNodes.length >= 1) {
+						countElement.removeChild(countElement.firstChild);
+					}
+					countElement.appendChild(document.createTextNode("After " + sumOfRolls(newData) + " rolls."));
 				}
 			});
 
@@ -54,8 +63,13 @@
 				document.title = "D20 Roll Distribution for " + myName;
 				
 				document.getElementById("nameDiv").appendChild(document.createTextNode(myName));
+				document.getElementById("countdiv").appendChild(document.createTextNode("After " + sumOfRolls(array) + " rolls."));
 			}
-
+			function sumOfRolls(array) {
+				return array.reduce(function(a, b) {
+					return a + b;
+				});
+			}
 			
 		</script>
     </head>
@@ -66,6 +80,7 @@
 			<div id="chart">
 				<canvas id="myChart" width="600" height="400"></canvas>
 			</div>
+			<div id='countdiv'></div>
 		</center>
     </body>
 </html>
