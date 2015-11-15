@@ -11,10 +11,9 @@ var httpapp = http.createServer(app).listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
  
- 
 var io = require('socket.io').listen(httpapp);
 
- io.sockets.on('connection', function(socket) {
+io.sockets.on('connection', function(socket) {
 	console.log('user connected');
 	socket.on('message_to_server', function(data) {
 		var escaped_message = sanitize.escape(data["message"]);
