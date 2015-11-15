@@ -36,7 +36,7 @@
 					var sumOf = totalSumOfRolls(newData);
 					var average = (sumOf / (countOf != 0 ? countOf : 1)).toFixed(2);
 					var median = medianOfRolls(newData);
-					countElement.appendChild(document.createTextNode("After " + countOf + " rolls, average roll is " + average + " and the median roll is " + median + "."  ));
+					countElement.appendChild(document.createTextNode("After " + countOf + " rolls, average roll is " + average /*+ " and the median roll is " + median*/ + "."  ));
 				}
 			});
 
