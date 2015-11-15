@@ -3,7 +3,7 @@ var http = require('http'),
     sanitize = require('validator'),
 	app = express();
 
-app.set('port', 3000);  
+app.set('port', process.env.PORT || 5000);  
 app.use(express.static(__dirname));
 
 //Setup client server
