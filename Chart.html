@@ -34,7 +34,7 @@
 					}
 					var countOf = countOfRolls(newData);
 					var sumOf = totalSumOfRolls(newData);
-					var average = (sumOf / (countOf != 0 ? countOf : 1))toFixed(2);
+					var average = (sumOf / (countOf != 0 ? countOf : 1)).toFixed(2);
 					countElement.appendChild(document.createTextNode("After " + countOf + " rolls average roll is " + average + "."  ));
 				}
 			});
